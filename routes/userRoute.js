@@ -13,8 +13,9 @@ router.route("/logout").get(logOut)
 
 async function isLoggedIn(req,res,next){
     if(!req.cookies.token) return next("login first")
-    const decoded=await jwt.verify(re.cookies.token,"chandhu@123")
+    const decoded=await jwt.verify(req.cookies.token,"chandhu@123")
     req.user=await User.findById(decoded.id)
+    
     next()
 }
 

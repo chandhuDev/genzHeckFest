@@ -22,14 +22,7 @@ password:{
     minlength:6
 },
 location:{
-    type:[{
-        latitude:{
-            type:String,
-        },
-        longitude:{
-            type:String,
-        }
-    }]
+    type:String
 },
 description:{
     type:String,
@@ -48,7 +41,7 @@ crimeOccuredAt:{
 
 userSchema.pre("save",async function(next){
   if(this.password) {
-    await bcrypt.hash(this.password,3)
+   this.password= await bcrypt.hash(this.password,3)
    next() 
   }
   

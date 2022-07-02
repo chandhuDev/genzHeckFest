@@ -1,5 +1,6 @@
 const User=require("../schema/userSchema")
 exports.signUp=async (req,res,next)=>{
+    try{
     const {email,password,fullName}=req.body
     if(!email || !password){
         return next(new Error("please provide email and password details"))
@@ -23,9 +24,14 @@ exports.signUp=async (req,res,next)=>{
       userDetails:user,
       success:true,
     })
+}
+  catch(e){
+    console.log(e)
+}
 
 }
 exports.login=async (req,res,next)=>{
+    try{
     const {email,password}=req.body
     if(!email || !password){
         return next(new Error("please provide email and password details"))
@@ -45,27 +51,49 @@ exports.login=async (req,res,next)=>{
       userDetails:user,
       success:true,
     })
+}
+catch(e){
+    console.log(e)
+}
 
 }
 exports.getCrimeDetails=async (req,res,next)=>{
-    const {latitude,longitude}=req.body
+    try{
+    const {location}=req.query
     
+    const listOfCrimes=await User.find({location:location})
+    
+    res.send(listOfCrimes)
+    }
+    catch(e){
+        console.log(e)
+    }
+
 }
 exports.postCrimeDetails=async (req,res,next)=>{
+    try{
     const {description,crimeType,location}=req.body
-    const user=await User.findById(req.user.email)
+    const mail=req.user.email
+    const user=await User.findOne({email:mail})
+    if(!user) return next(new Error("there is no saved user"))
     user.description=description
     user.crimeType=crimeType
-    user.location.latitude=latitude
-    user.location.longitude=longitude
-    await user.save()
+    user.location=location
+    
+   await user.save({ validateBeforeSave: false })
+    
     res.json({
         success:true,
         updatedDetails:user
     })
-    
+  }catch(e){
+    console.log(e)
+  }
 
 }
+    
+
+
 
 exports.logOut=async (req,res,next)=>{
     if(!req.cookies.token){
