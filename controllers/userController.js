@@ -63,8 +63,18 @@ catch(e){
 exports.getCrimeDetails=async (req,res,next)=>{
     try{
     const {location}=req.query
-    
-    const listOfCrimes=await User.find({location:location})
+    let listOfCrimes=[]
+    const Crimes=await User.find({location:location})
+    for(let i=0;i<Crimes.length;i++){
+         const crimeObject={}
+         crimeObject.location=Crimes[i].location
+         crimeObject.description=Crimes[i].description
+         crimeObject.crimeType=Crimes[i].crimeType
+         crimeObject.createdAt=Crimes[i].createdAt
+         listOfCrimes.push(crimeObject)
+    }
+
+     
     
     res.send(listOfCrimes)
     }
