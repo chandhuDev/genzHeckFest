@@ -60,29 +60,44 @@ catch(e){
 }
 
 }
-exports.getCrimeDetails=async (req,res,next)=>{
+exports.getOneDetails=async (req,res,next)=>{
     try{
     const {location}=req.query
-    let listOfCrimes=[]
+    
     const Crimes=await User.find({location:location})
-    for(let i=0;i<Crimes.length;i++){
-         const crimeObject={}
-         crimeObject.location=Crimes[i].location
-         crimeObject.description=Crimes[i].description
-         crimeObject.crimeType=Crimes[i].crimeType
-         crimeObject.createdAt=Crimes[i].createdAt
-         listOfCrimes.push(crimeObject)
-    }
-
+    
      
     
-    res.send(listOfCrimes)
+    res.send(crimes(Crimes))
     }
     catch(e){
         console.log(e)
     }
 
 }
+exports.getAllDetails=async (req,res,next)=>{
+ try{
+
+    const Crimes=await User.find()
+    
+    res.send(crimes(Crimes))
+}catch(e){
+      console.log(e)
+ }
+}
+function crimes(Crimes){
+    let listOfCrimes=[]
+    for(let i=0;i<Crimes.length;i++){
+        var crimeObject={}
+        crimeObject.location=Crimes[i].location
+        crimeObject.description=Crimes[i].description
+        crimeObject.crimeType=Crimes[i].crimeType
+        crimeObject.createdAt=Crimes[i].crimeOccuredAt
+        listOfCrimes.push(crimeObject)
+    }
+    return listOfCrimes
+}
+
 exports.postCrimeDetails=async (req,res,next)=>{
     try{
     const {description,crimeType,location}=req.body
