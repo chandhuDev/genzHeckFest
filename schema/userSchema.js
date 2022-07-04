@@ -35,6 +35,9 @@ crimeOccuredAt:{
     type:Date,
     default:Date.now,
 },
+token:{
+    type:String
+}
 
 
 })

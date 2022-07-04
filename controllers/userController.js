@@ -5,14 +5,17 @@ exports.signUp=async (req,res,next)=>{
     if(!email || !password){
         return next(new Error("please provide email and password details"))
     }
-    
+   
     const user=await User.create({
         fullName,
         email,
         password,
         
+        
     })
     const token=user.jsonToken()
+    user.token=token
+    await user.save({ validateBeforeSave: false })
     user.password=undefined 
     
     const options={
@@ -40,14 +43,14 @@ exports.login=async (req,res,next)=>{
     const user=await User.findOne({email})
     const isPasswordCorrect=user.checkPassword(password)
     if(!isPasswordCorrect) return next(new Error("please retype the password"))
-    const token=user.jsonToken()
+     
     const options={
         expires:new Date(Date.now()+24*60*60*1000),
         httpOnly:true
     }
     req.user=user
 
-    res.status(200).cookie("token",token,options).json({
+    res.status(200).cookie("token",user.token,options).json({
       userDetails:user,
       success:true,
     })
